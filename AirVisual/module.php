@@ -216,12 +216,12 @@ class AirVisual extends IPSModule
 		} else {
 			$this->RegisterVariableString("location", $this->Translate("Location"), "", 2);
 			$associations = Array(
-				Array(0, $this->Translate("Good"), "", 0x74DF00), // 0 - 50 green
-				Array(51, $this->Translate("Moderate"), "", 0xF7FE2E), // 51 - 100 yellow
-				Array(101, $this->Translate("Unhealthy for Sensitive Groups"), "", 0xFF8000), // 101 - 150 orange
-				Array(151, $this->Translate("Unhealthy"), "", 0xFF0000), // 151 - 200 red
-				Array(201, $this->Translate("Very Unhealthy"), "", 0x8A0886), // 201 - 300 purple
-				Array(301, $this->Translate("Hazardous"), "", 0x3B0B17) // 301 - 500 maroon
+				Array(0, $this->Translate("Good %d"), "", 0x74DF00), // 0 - 50 green
+				Array(51, $this->Translate("Moderate %d"), "", 0xF7FE2E), // 51 - 100 yellow
+				Array(101, $this->Translate("Unhealthy for Sensitive Groups %d"), "", 0xFF8000), // 101 - 150 orange
+				Array(151, $this->Translate("Unhealthy %d"), "", 0xFF0000), // 151 - 200 red
+				Array(201, $this->Translate("Very Unhealthy %d"), "", 0x8A0886), // 201 - 300 purple
+				Array(301, $this->Translate("Hazardous %d"), "", 0x3B0B17) // 301 - 500 maroon
 			);
 			$this->RegisterProfileAssociation("AirVisual.aqius", "Factory", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
 			$this->RegisterVariableFloat("aqius", $this->Translate("AQI US"), "AirVisual.aqius", 3);
