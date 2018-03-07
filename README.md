@@ -103,7 +103,7 @@ Holt Daten für eine nächst gelegene Stadt mit Daten ab
 
 ###  b. GUIDs und Datenaustausch:
 
-#### BMW:
+#### AirVisual:
 
 GUID: `{6F94356B-0847-2EA9-7E93-32FDD6ABFD76}` 
 

@@ -262,9 +262,13 @@ class AirVisual extends IPSModule
 	 */
 	public function DataUpdate()
 	{
-		$city = $this->ReadPropertyInteger("city");
-		$state = $this->ReadPropertyInteger("state");
-		$country = $this->ReadPropertyInteger("country");
+		$city_value = $this->ReadPropertyInteger("city");
+		$city = $this->CitiesList($city_value);
+		$state_value = $this->ReadPropertyInteger("state");
+		$state = $this->StatesList($state_value);
+		$country_value = $this->ReadPropertyInteger("country");
+		$country = $this->CountriesList($country_value);
+		$this->SendDebug("AirVisual Request", "Get data for location :" . $city . " (" . $state . "/" . $country . ")", 0);
 		if ($city != "") {
 			$data = $this->GetCityData($city, $state, $country);
 		} else {
@@ -685,6 +689,7 @@ class AirVisual extends IPSModule
 	{
 		$command = 'nearest_city?key=';
 		$data_city = $this->SendAirVisualAPIRequest($command);
+		$this->SendDebug("AirVisual Response", $data_city, 0);
 		$data = json_decode($data_city);
 		$status = $data->status;
 		$this->SendDebug("AirVisual Request Status", $status, 0);
@@ -705,6 +710,7 @@ class AirVisual extends IPSModule
 	{
 		$command = 'nearest_city?lat=' . $latitude . '&lon=' . $longitude . '&key=';
 		$data_city = $this->SendAirVisualAPIRequest($command);
+		$this->SendDebug("AirVisual Response", $data_city, 0);
 		$data = json_decode($data_city);
 		$status = $data->status;
 		$this->SendDebug("AirVisual Request Status", $status, 0);
@@ -727,6 +733,7 @@ class AirVisual extends IPSModule
 	{
 		$command = 'city?city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
 		$data_city = $this->SendAirVisualAPIRequest($command);
+		$this->SendDebug("AirVisual Response", $data_city, 0);
 		$data = json_decode($data_city);
 		$status = $data->status;
 		$this->SendDebug("AirVisual Request Status", $status, 0);
