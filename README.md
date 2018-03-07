@@ -1,6 +1,6 @@
 # IPSymconAirVisual
 
-Modul für IP-Symcon ab Version 4.3 Ermöglicht das Ausöesen der Werte von AirVisual.
+Modul für IP-Symcon ab Version 4.3 Ermöglicht das Auslesen der Werte von AirVisual.
 
 ## Dokumentation
 
