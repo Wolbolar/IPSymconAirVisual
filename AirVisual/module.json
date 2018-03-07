@@ -1,0 +1,11 @@
+{
+    "id": "{6F94356B-0847-2EA9-7E93-32FDD6ABFD76}",
+    "name": "AirVisual",
+    "type": 3,
+    "vendor": "AirVisual",
+    "aliases": ["AirVisual"],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "AirVisual"
+}
