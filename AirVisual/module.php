@@ -661,6 +661,7 @@ class AirVisual extends IPSModule
 	 */
 	public function ListStates(string $country)
 	{
+		$country = urlencode($country);
 		$command = 'states?country=' . $country . '&key=';
 		$response = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $response, 0);
@@ -675,6 +676,8 @@ class AirVisual extends IPSModule
 	 */
 	public function ListCities(string $state, string $country)
 	{
+		$state = urlencode($state);
+		$country = urlencode($country);
 		$command = 'cities?state=' . $state . '&country=' . $country . '&key=';
 		$response = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $response, 0);
@@ -731,6 +734,8 @@ class AirVisual extends IPSModule
 	 */
 	public function GetCityData(string $city, string $state, string $country)
 	{
+		$state = urlencode($state);
+		$country = urlencode($country);
 		$command = 'city?city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
 		$data_city = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $data_city, 0);
@@ -808,6 +813,8 @@ class AirVisual extends IPSModule
 	 */
 	public function GetCityStations(string $city, string $state, string $country)
 	{
+		$state = urlencode($state);
+		$country = urlencode($country);
 		$command = 'stations?city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
 		$response = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $response, 0);
@@ -851,6 +858,9 @@ class AirVisual extends IPSModule
 	 */
 	public function GetStationData(string $station, string $city, string $state, string $country)
 	{
+		$city = urlencode($city);
+		$state = urlencode($state);
+		$country = urlencode($country);
 		$command = 'station?station=' . $station . '&city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
 		$response = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $response, 0);
@@ -897,7 +907,6 @@ class AirVisual extends IPSModule
 	 */
 	protected function SendAirVisualAPIRequest($command)
 	{
-		$command = urlencode($command);
 		$api_key = $this->ReadPropertyString("api_key");
 		$curl = curl_init();
 
