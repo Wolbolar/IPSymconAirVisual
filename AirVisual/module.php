@@ -897,6 +897,7 @@ class AirVisual extends IPSModule
 	 */
 	protected function SendAirVisualAPIRequest($command)
 	{
+		$command = urlencode($command);
 		$api_key = $this->ReadPropertyString("api_key");
 		$curl = curl_init();
 
