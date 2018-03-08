@@ -234,7 +234,7 @@ class AirVisual extends IPSModule
 
 			$this->RegisterVariableFloat("humidity", $this->Translate("Humidity"), "~Humidity.F", 10);
 			$this->RegisterProfileAssociation("AirVisual.ic", "Moon", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
-			$this->RegisterVariableFloat("ic", $this->Translate("ic"), "AirVisual.ic", 11);
+			$this->RegisterVariableString("ic", $this->Translate("ic"), "", 11);
 			$this->RegisterVariableFloat("pressure", $this->Translate("Pressure"), "~AirPressure.F", 12);
 			$this->RegisterVariableFloat("temperature", $this->Translate("Temperature"), "~Temperature", 13);
 			$this->RegisterVariableFloat("winddirection", $this->Translate("Wind Direction"), "~WindDirection.F", 14);
@@ -776,36 +776,36 @@ class AirVisual extends IPSModule
 		$weather = $data->data->current->weather;
 		$weather_ts = $weather->ts;
 		$this->SendDebug("AirVisual", "Weather Timestamp: " . $weather_ts, 0);
-		$humidity = $weather->hu;
+		$humidity = floatval($weather->hu);
 		$this->SendDebug("AirVisual", "Humidity: " . $humidity, 0);
 		$this->SetValue("humidity", $humidity);
 		$ic = $weather->ic;
 		$this->SendDebug("AirVisual", "ic: " . $ic, 0);
 		$this->SetValue("ic", $ic);
-		$pressure = $weather->pr;
+		$pressure = floatval($weather->pr);
 		$this->SendDebug("AirVisual", "Pressure: " . $pressure, 0);
 		$this->SetValue("pressure", $pressure);
-		$temperature = $weather->tp;
+		$temperature = floatval($weather->tp);
 		$this->SendDebug("AirVisual", "Temperature: " . $temperature, 0);
 		$this->SetValue("temperature", $temperature);
-		$winddirection = $weather->wd;
+		$winddirection = floatval($weather->wd);
 		$this->SendDebug("AirVisual", "Winddirection: " . $winddirection, 0);
 		$this->SetValue("winddirection", $winddirection);
-		$windspeed = $weather->ws;
+		$windspeed = floatval($weather->ws);
 		$this->SendDebug("AirVisual", "Windspeed: " . $windspeed, 0);
 		$this->SetValue("windspeed", $windspeed);
 
 		$pollution = $data->data->current->pollution;
 		$pollution_ts = $pollution->ts;
 		$this->SendDebug("AirVisual", "Pollution Timestamp: " . $pollution_ts, 0);
-		$aqius = $pollution->aqius;
+		$aqius = floatval($pollution->aqius);
 		$this->SendDebug("AirVisual", "AQI US: " . $aqius, 0);
 		$this->SetValue("aqius", $aqius);
-		$mainus = $pollution->mainus;
+		$mainus = $pollution->mainus; // string
 		$this->SendDebug("AirVisual", "Main US: " . $mainus, 0);
-		$aqicn = $pollution->aqicn;
+		$aqicn = floatval($pollution->aqicn);
 		$this->SendDebug("AirVisual", "AQI China: " . $aqicn, 0);
-		$maincn = $pollution->maincn;
+		$maincn = $pollution->maincn; // string
 		$this->SendDebug("AirVisual", "Main China: " . $maincn, 0);
 	}
 
