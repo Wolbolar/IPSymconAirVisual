@@ -739,14 +739,19 @@ class AirVisual extends IPSModule
 		$command = 'city?city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
 		$data_city = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $data_city, 0);
-		$data = json_decode($data_city);
-		$status = $data->status;
-		$this->SendDebug("AirVisual Request Status", $status, 0);
-		if ($status == "success") {
-			$this->SendDebug("AirVisual", "Get city data successfull", 0);
-			$this->WriteCityData($data);
+		if (empty($data_city)) {
+			$this->SendDebug("AirVisual Request Status", "no respone for this city", 0);
+			return "";
+		} else {
+			$data = json_decode($data_city);
+			$status = $data->status;
+			$this->SendDebug("AirVisual Request Status", $status, 0);
+			if ($status == "success") {
+				$this->SendDebug("AirVisual", "Get city data successfull", 0);
+				$this->WriteCityData($data);
+			}
+			return $data_city;
 		}
-		return $data_city;
 	}
 
 	/**
@@ -1233,7 +1238,6 @@ class AirVisual extends IPSModule
 	//Add this Polyfill for IP-Symcon 4.4 and older
 	protected function SetValue($Ident, $Value)
 	{
-
 		if (IPS_GetKernelVersion() >= 5) {
 			parent::SetValue($Ident, $Value);
 		} else {
