@@ -776,22 +776,22 @@ class AirVisual extends IPSModule
 		$weather = $data->data->current->weather;
 		$weather_ts = $weather->ts;
 		$this->SendDebug("AirVisual", "Weather Timestamp: " . $weather_ts, 0);
-		$humidity = floatval($weather->hu);
+		$humidity = $weather->hu ? floatval($weather->hu) : 0;
 		$this->SendDebug("AirVisual", "Humidity: " . $humidity, 0);
 		$this->SetValue("humidity", $humidity);
-		$ic = $weather->ic;
+		$ic = isset($weather->ic) ? $weather->ic : "";
 		$this->SendDebug("AirVisual", "ic: " . $ic, 0);
 		$this->SetValue("ic", $ic);
-		$pressure = floatval($weather->pr);
+		$pressure = isset($weather->pr) ? floatval($weather->pr) : 0;
 		$this->SendDebug("AirVisual", "Pressure: " . $pressure, 0);
 		$this->SetValue("pressure", $pressure);
-		$temperature = floatval($weather->tp);
+		$temperature = isset($weather->tp) ? floatval($weather->tp) : 0;
 		$this->SendDebug("AirVisual", "Temperature: " . $temperature, 0);
 		$this->SetValue("temperature", $temperature);
-		$winddirection = floatval($weather->wd);
+		$winddirection = isset($weather->wd) ? floatval($weather->wd) : 0;
 		$this->SendDebug("AirVisual", "Winddirection: " . $winddirection, 0);
 		$this->SetValue("winddirection", $winddirection);
-		$windspeed = floatval($weather->ws);
+		$windspeed = isset($weather->ws) ? floatval($weather->ws) : 0;
 		$this->SendDebug("AirVisual", "Windspeed: " . $windspeed, 0);
 		$this->SetValue("windspeed", $windspeed);
 
