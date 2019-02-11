@@ -189,12 +189,19 @@ class AirVisual extends IPSModule
 		$this->RegisterPropertyInteger('UpdateInterval', 60);
 		$this->RegisterTimer('AirVisualDataUpdate', 0, 'AirVisual_DataUpdate(' . $this->InstanceID . ');');
 		$this->RegisterVariableString('airvisual_earth_3d', $this->Translate("AirVisual Earth"), '~HTMLBox', 1);
+
+		//we will wait until the kernel is ready
+		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 	}
 
 	public function ApplyChanges()
 	{
 		//Never delete this line!
 		parent::ApplyChanges();
+
+		if (IPS_GetKernelRunlevel() !== KR_READY) {
+			return;
+		}
 
 		$this->ValidateConfiguration();
 	}
@@ -241,10 +248,30 @@ class AirVisual extends IPSModule
 			$this->RegisterVariableFloat("windspeed", $this->Translate("Wind Speed"), "~WindSpeed.kmh", 15);
 			$this->SetVisualEarth();
 			$this->SetUpdateIntervall();
+			// Status Aktiv
+			$this->SetStatus(102);
 		}
+	}
 
-		// Status Aktiv
-		$this->SetStatus(102);
+	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+	{
+
+		switch ($Message) {
+			case IM_CHANGESTATUS:
+				if ($Data[0] === IS_ACTIVE) {
+					$this->ApplyChanges();
+				}
+				break;
+
+			case IPS_KERNELMESSAGE:
+				if ($Data[0] === KR_READY) {
+					$this->ApplyChanges();
+				}
+				break;
+
+			default:
+				break;
+		}
 	}
 
 	/**
@@ -782,6 +809,7 @@ class AirVisual extends IPSModule
 		$ic = isset($weather->ic) ? $weather->ic : "";
 		$this->SendDebug("AirVisual", "ic: " . $ic, 0);
 		$this->SetValue("ic", $ic);
+
 		$pressure = isset($weather->pr) ? floatval($weather->pr) : 0;
 		$this->SendDebug("AirVisual", "Pressure: " . $pressure, 0);
 		$this->SetValue("pressure", $pressure);
@@ -1228,7 +1256,7 @@ class AirVisual extends IPSModule
 			[
 				'code' => 205,
 				'icon' => 'error',
-				'caption' => 'field must not be empty.'
+				'caption' => 'API field must not be empty.'
 			]
 		];
 
