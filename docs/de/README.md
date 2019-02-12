@@ -2,7 +2,7 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Symcon%20Version-%3E%205.1-green.svg)](https://www.symcon.de/service/dokumentation/installation/)
 
-Modul für IP-Symcon ab Version 4.3 ermöglicht das Auslesen der Werte von AirVisual.
+Modul für IP-Symcon ab Version 5.1 ermöglicht das Auslesen der Werte von AirVisual.
 
 ## Dokumentation
 
@@ -17,7 +17,7 @@ Modul für IP-Symcon ab Version 4.3 ermöglicht das Auslesen der Werte von AirVi
 
 ## 1. Funktionsumfang
 
-Mit dem Modul lassen Werte von AirVisual auslesen und die Karte in IP-Symcon (ab Version 4.3) darstellen. 
+Mit dem Modul lassen Werte von AirVisual auslesen und die Karte in IP-Symcon (ab Version 5.1) darstellen. 
 
 ### Anzeige:  
 

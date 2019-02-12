@@ -164,9 +164,9 @@ class AirVisual extends IPSModule
 		//You cannot use variables here. Just static values.
 
 		$this->RegisterPropertyInteger('country', 24);
-		$this->RegisterPropertyString('available_countries', '["Afghanistan","Andorra","Argentina","Australia","Austria","Bahamas","Bahrain","Bangladesh","Belgium","Bosnia Herzegovina","Brazil","Cambodia","Canada","Chile","China","Colombia","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Ethiopia","Finland","France","Germany","Hong Kong","Hungary","India","Indonesia","Iran","Ireland","Israel","Italy","Japan","Kosovo","Kuwait","Latvia","Lithuania","Macedonia","Malaysia","Malta","Mexico","Mongolia","Morocco","Nepal","Netherlands","New Zealand","Nigeria","Norway","Pakistan","Peru","Philippines","Poland","Portugal","Puerto Rico","Russia","Saudi Arabia","Serbia","Singapore","Slovakia","Slovenia","South Korea","Spain","Sri Lanka","Sweden","Switzerland","Taiwan","Thailand","Turkey","USA","Uganda","Ukraine","United Arab Emirates","United Kingdom","Vietnam"]');
+		$this->RegisterAttributeString('available_countries', '["Afghanistan","Andorra","Argentina","Australia","Austria","Bahamas","Bahrain","Bangladesh","Belgium","Bosnia Herzegovina","Brazil","Cambodia","Canada","Chile","China","Colombia","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Ethiopia","Finland","France","Germany","Hong Kong","Hungary","India","Indonesia","Iran","Ireland","Israel","Italy","Japan","Kosovo","Kuwait","Latvia","Lithuania","Macedonia","Malaysia","Malta","Mexico","Mongolia","Morocco","Nepal","Netherlands","New Zealand","Nigeria","Norway","Pakistan","Peru","Philippines","Poland","Portugal","Puerto Rico","Russia","Saudi Arabia","Serbia","Singapore","Slovakia","Slovenia","South Korea","Spain","Sri Lanka","Sweden","Switzerland","Taiwan","Thailand","Turkey","USA","Uganda","Ukraine","United Arab Emirates","United Kingdom","Vietnam"]');
 		$this->RegisterPropertyInteger('state', -1);
-		$this->RegisterPropertyString('available_states', '');
+		$this->RegisterAttributeString('available_states', '');
 		$this->RegisterPropertyString('states_germany', '["Baden-Wuerttemberg","Bavaria","Berlin","Brandenburg", "Bremen", "Hamburg","Hessen","Lower Saxony","Mecklenburg-Vorpommern","Nordrhein-Westfalen","Rheinland-Pfalz","Saarland","Saxony","Saxony-Anhalt","Schleswig-Holstein","Thuringia"]');
 		$this->RegisterPropertyString('states_austria', '["Burgenland","Lower Austria","Salzburg","Styria","Tyrol","Upper Austria","Vienna","Vorarlberg"]');
 		$this->RegisterPropertyString('states_switzerland', '["Basel-Landschaft","Bern","Grisons","Lucerne","Neuchatel","Schwyz","Solothurn","Thurgau","Ticino","Valais","Vaud","Zurich"]');
@@ -184,7 +184,7 @@ class AirVisual extends IPSModule
 		$this->RegisterPropertyString('states_poland', '["Greater Poland","Kujawsko-Pomorskie","Lesser Poland Voivodeship","Lodz Voivodeship","Lower Silesia","Lublin","Lubusz","Mazovia","Opole Voivodeship","Podlasie","Pomerania","Silesia","Subcarpathian Voivodeship","Swietokrzyskie","Warmia-Masuria","West Pomerania"]');
 		$this->RegisterPropertyString('states_spain', '["Andalusia","Aragon","Asturias","Balearic Islands","Basque Country","Cantabria","Castille and Leon","Castille-La Mancha","Catalonia","Extremadura","Galicia","La Rioja","Madrid","Murcia","Navarre","Valencia"]');
 		$this->RegisterPropertyInteger('city', -1);
-		$this->RegisterPropertyString('available_cities', '');
+		$this->RegisterAttributeString('available_cities', '');
 		$this->RegisterPropertyString('api_key', '');
 		$this->RegisterPropertyInteger('UpdateInterval', 60);
 		$this->RegisterTimer('AirVisualDataUpdate', 0, 'AirVisual_DataUpdate(' . $this->InstanceID . ');');
@@ -315,7 +315,7 @@ class AirVisual extends IPSModule
 	 */
 	public function GetSelectionCountries()
 	{
-		$available_countries = $this->ReadPropertyString("available_countries");
+		$available_countries = $this->ReadAttributeString("available_countries");
 		if ($available_countries == "") {
 			$this->SendDebug("AirVisual", "no countries, get countries from AirVisual", 0);
 			$payload = $this->ListSupportedCountries();
@@ -327,9 +327,7 @@ class AirVisual extends IPSModule
 				foreach ($available_countries as $key => $country) {
 					$countries[] = $country["country"];
 				}
-
-				IPS_SetProperty($this->InstanceID, "available_countries", json_encode($countries));
-				IPS_ApplyChanges($this->InstanceID);
+				$this->WriteAttributeString("available_countries", json_encode($countries));
 				return $countries;
 			} else {
 				$this->SendDebug("AirVisual", "could not get countries list", 0);
@@ -427,8 +425,7 @@ class AirVisual extends IPSModule
 				foreach ($available_states as $key => $state) {
 					$states[] = $state["state"];
 				}
-				IPS_SetProperty($this->InstanceID, "available_states", json_encode($states));
-				IPS_ApplyChanges($this->InstanceID);
+				$this->WriteAttributeString("available_states", json_encode($states));
 				$this->SendDebug("AirVisual", "states: " . json_encode($states), 0);
 				return $states;
 			} else {
@@ -466,8 +463,7 @@ class AirVisual extends IPSModule
 				foreach ($available_cities as $key => $city) {
 					$cities[] = $city["city"];
 				}
-				IPS_SetProperty($this->InstanceID, "available_cities", json_encode($cities));
-				IPS_ApplyChanges($this->InstanceID);
+				$this->WriteAttributeString("available_cities", json_encode($cities));
 				return $cities;
 			} else {
 				$this->SendDebug("AirVisual", "could not get cities list", 0);
@@ -504,7 +500,7 @@ class AirVisual extends IPSModule
 	 */
 	protected function CitiesList(int $city_value)
 	{
-		$available_cities = $this->ReadPropertyString("available_cities");
+		$available_cities = $this->ReadAttributeString("available_cities");
 		if ($available_cities == "") {
 			$this->SendDebug("AirVisual", "no city, get cities from AirVisual", 0);
 			$cities = $this->GetSelectionCities();
@@ -550,7 +546,7 @@ class AirVisual extends IPSModule
 	{
 		$country_value = $this->GetCountriesValue();
 		$country = $this->CountriesList($country_value);
-		$available_states = $this->ReadPropertyString("available_states");
+		$available_states = $this->ReadAttributeString("available_states");
 		if ($country_value == 24 && $country == "Germany") {
 			$available_states = $this->ReadPropertyString("states_germany");
 			$states = json_decode($available_states, true);
@@ -640,7 +636,7 @@ class AirVisual extends IPSModule
 	 */
 	protected function CountriesList(int $country_value)
 	{
-		$available_countries = $this->ReadPropertyString("available_countries");
+		$available_countries = $this->ReadAttributeString("available_countries");
 		if ($available_countries == "") {
 			$this->SendDebug("AirVisual", "no countries, get countries from AirVisual", 0);
 			$countries = $this->GetSelectionCountries();
