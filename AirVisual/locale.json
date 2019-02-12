@@ -2,6 +2,7 @@
   "translations": {
     "de": {
       "AirVisual API Key": "AirVisual API Key",
+      "Get API Key": "API Key anlegen",
       "API Key": "API Key",
       "Seconds": "Sekunden",
       "Country": "Land",

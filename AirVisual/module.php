@@ -1084,7 +1084,18 @@ class AirVisual extends IPSModule
 			]
 		];
 
-		if ($api_key != "") {
+		if ($api_key === "") {
+			$form = array_merge_recursive(
+				$form,
+				[
+					[
+						'type' => 'Button',
+						'label' => 'Get API Key',
+						'onClick' => 'echo "https://www.airvisual.com";'
+					]
+				]
+			);
+		} else {
 			$form = array_merge_recursive(
 				$form,
 				[
@@ -1097,7 +1108,7 @@ class AirVisual extends IPSModule
 				]
 			);
 		}
-		if ($country != -1) {
+		if ($country != -1 && $api_key != "") {
 			$form = array_merge_recursive(
 				$form,
 				[
@@ -1111,7 +1122,7 @@ class AirVisual extends IPSModule
 				]
 			);
 		}
-		if ($state != -1) {
+		if ($state != -1 && $api_key != "") {
 			$form = array_merge_recursive(
 				$form,
 				[
