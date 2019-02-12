@@ -2,7 +2,7 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModule-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Symcon%20Version-%3E%205.1-green.svg)](https://www.symcon.de/en/service/documentation/installation/)
 
-Module for IP-Symcon version 4.3 or higher allows you to read the values of AirVisual.
+Module for IP-Symcon version 5.1 or higher allows you to read the values of AirVisual.
 
 ## Documentation
 
@@ -17,7 +17,7 @@ Module for IP-Symcon version 4.3 or higher allows you to read the values of AirV
 
 ## 1. Features
 
-The module lets you read values from AirVisual and display the map in IP-Symcon (version 4.3 or higher).
+The module lets you read values from AirVisual and display the map in IP-Symcon (version 5.1 or higher).
 
 ### Display:
 
