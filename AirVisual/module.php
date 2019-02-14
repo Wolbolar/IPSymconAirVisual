@@ -640,6 +640,7 @@ class AirVisual extends IPSModule
 		if ($available_countries == "") {
 			$this->SendDebug("AirVisual", "no countries, get countries from AirVisual", 0);
 			$countries = $this->GetSelectionCountries();
+			// todo check false
 		} else {
 			$countries = json_decode($available_countries, true);
 		}
@@ -958,6 +959,20 @@ class AirVisual extends IPSModule
 			$this->SendDebug("AirVisual Error", "cURL Error #:" . $err, 0);
 			return "cURL Error #:" . $err;
 		} else {
+			$payload = $response;
+			$air_visual_response = json_decode($payload, true);
+			$status = $air_visual_response["status"];
+			if ($status == "fail") {
+				$this->SendDebug("AirVisual", "Status: " . $status, 0);
+				$data = $air_visual_response["data"];
+				$message = $data["message"];
+				$this->SendDebug("AirVisual Error", "Message: " . $message, 0);
+				if ($message == "call_per_day_limit_reached") {
+					$this->SetStatus(206);
+				}
+			}
+
+
 			return $response;
 		}
 	}
@@ -1039,6 +1054,32 @@ class AirVisual extends IPSModule
 
 	}
 
+	protected function CheckAirVisualConnection()
+	{
+		$check = ["state" => false, "message" => "no connection"];
+		$command = 'countries?key=';
+		$payload = $this->SendAirVisualAPIRequest($command);
+		$this->SendDebug("AirVisual Response", $payload, 0);
+		$air_visual_response = json_decode($payload, true);
+		$state = $air_visual_response["status"];
+		$this->SendDebug("AirVisual", "Status: " . $state, 0);
+		if ($state == "fail") {
+			$data = $air_visual_response["data"];
+			$message = $data["message"];
+			$this->SendDebug("AirVisual Error", "Message: " . $message, 0);
+			$check["state"] = $state;
+			$check["message"] = $message;
+			if ($message == "call_per_day_limit_reached") {
+				$check["message"] = "call per day limit reached";
+				$this->SetStatus(206);
+			}
+		} else {
+			$check["state"] = $state; // success
+			$check["message"] = "connection successfull";
+		}
+		return $check;
+	}
+
 	/***********************************************************
 	 * Configuration Form
 	 ***********************************************************/
@@ -1096,54 +1137,92 @@ class AirVisual extends IPSModule
 				]
 			);
 		} else {
-			$form = array_merge_recursive(
-				$form,
-				[
+			$check = $this->CheckAirVisualConnection();
+			if ($check["state"] == false) {
+				$form = array_merge_recursive(
+					$form,
 					[
-						'name' => 'country',
-						'type' => 'Select',
-						'caption' => 'Country',
-						'options' => $this->GetFormCountry()
+						[
+							'type' => 'Label',
+							'label' => 'AirVisual Error: ' . $check["message"]
+						]
 					]
-				]
-			);
+				);
+			} else {
+				$form = array_merge_recursive(
+					$form,
+					[
+						[
+							'name' => 'country',
+							'type' => 'Select',
+							'caption' => 'Country',
+							'options' => $this->GetFormCountry()
+						]
+					]
+				);
+			}
 		}
 		if ($country != -1 && $api_key != "") {
-			$form = array_merge_recursive(
-				$form,
-				[
+			$check = $this->CheckAirVisualConnection();
+			if ($check["state"] == false) {
+				$form = array_merge_recursive(
+					$form,
 					[
-						'name' => 'state',
-						'type' => 'Select',
-						'caption' => 'State',
-						'options' => $this->GetFormState()
-					],
-
-				]
-			);
+						[
+							'type' => 'Label',
+							'label' => 'AirVisual Error: ' . $check["message"]
+						]
+					]
+				);
+			} else {
+				$form = array_merge_recursive(
+					$form,
+					[
+						[
+							'name' => 'state',
+							'type' => 'Select',
+							'caption' => 'State',
+							'options' => $this->GetFormState()
+						]
+					]
+				);
+			}
 		}
 		if ($state != -1 && $api_key != "") {
-			$form = array_merge_recursive(
-				$form,
-				[
+			$check = $this->CheckAirVisualConnection();
+			if ($check["state"] == false) {
+				$form = array_merge_recursive(
+					$form,
 					[
-						'name' => 'city',
-						'type' => 'Select',
-						'caption' => 'City',
-						'options' => $this->GetFormCity()
+						[
+							'type' => 'Label',
+							'label' => 'AirVisual Error: ' . $check["message"]
+						]
 					]
-				]
-			);
+				);
+			} else {
+				$form = array_merge_recursive(
+					$form,
+					[
+						[
+							'name' => 'city',
+							'type' => 'Select',
+							'caption' => 'City',
+							'options' => $this->GetFormCity()
+						]
+					]
+				);
+			}
 		}
-
 		return $form;
 	}
 
 	protected function GetFormCountry()
 	{
+		$form = [];
 		$countries = $this->GetSelectionCountries();
 		$this->SendDebug("AirVisual", json_encode($countries), 0);
-		$form = [];
+
 		$form[] = [
 			'label' => 'Please choose',
 			'value' => -1
@@ -1159,9 +1238,10 @@ class AirVisual extends IPSModule
 
 	protected function GetFormState()
 	{
+		$form = [];
 		$states = $this->GetSelectionStates();
 		$this->SendDebug("AirVisual", json_encode($states), 0);
-		$form = [];
+
 		$form[] = [
 			'label' => 'Please choose',
 			'value' => -1
@@ -1177,9 +1257,10 @@ class AirVisual extends IPSModule
 
 	protected function GetFormCity()
 	{
+		$form = [];
 		$cities = $this->GetSelectionCities();
 		$this->SendDebug("AirVisual", json_encode($cities), 0);
-		$form = [];
+
 		$form[] = [
 			'label' => 'Please choose',
 			'value' => -1
@@ -1264,6 +1345,11 @@ class AirVisual extends IPSModule
 				'code' => 205,
 				'icon' => 'error',
 				'caption' => 'API field must not be empty.'
+			],
+			[
+				'code' => 206,
+				'icon' => 'error',
+				'caption' => 'call per day limit reached'
 			]
 		];
 
