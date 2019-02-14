@@ -52,7 +52,8 @@
       "please select a state": "Bitte Bundestaat auswählen",
       "please select a city": "Bitte Stadt auswählen",
       "connection to AirVisual lost.": "Verbindung zum AirVisual verloren.",
-      "API field must not be empty.": "API Feld darf nicht leer sein."
+      "API field must not be empty.": "API Feld darf nicht leer sein.",
+      "call per day limit reached": "Limit für Anfragen am Tag erreicht"
     }
   }
 }
