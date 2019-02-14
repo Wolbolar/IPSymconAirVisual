@@ -902,6 +902,7 @@ class AirVisual extends IPSModule
 		$error_messages = array(
 			"success" => "JSON file was generated successfully",
 			"call_limit_reached" => "minute/monthly limit is reached",
+			"call_per_day_limit_reached" => "call per day limit reached",
 			"api_key_expired" => "API key is expired",
 			"incorrect_api_key" => "using wrong API key",
 			"ip_location_failed" => "service is unable to locate IP address of request",
@@ -910,7 +911,7 @@ class AirVisual extends IPSModule
 			"too_many_requests" => "more than 10 calls per second are made"
 		);
 		$error_message = $error_messages[$error];
-		$this->SendDebug("AirVisual", $error_message, 0);
+		$this->SendDebug("AirVisual", "Error: " . $error_message, 0);
 		return $error_message;
 	}
 
@@ -963,7 +964,7 @@ class AirVisual extends IPSModule
 			$air_visual_response = json_decode($payload, true);
 			$status = $air_visual_response["status"];
 			if ($status == "fail") {
-				$this->SendDebug("AirVisual", "Status: " . $status, 0);
+				$this->SendDebug("AirVisual Response", "State: " . $status, 0);
 				$data = $air_visual_response["data"];
 				$message = $data["message"];
 				$this->SendDebug("AirVisual Error", "Message: " . $message, 0);
@@ -971,8 +972,6 @@ class AirVisual extends IPSModule
 					$this->SetStatus(206);
 				}
 			}
-
-
 			return $response;
 		}
 	}
@@ -1056,26 +1055,24 @@ class AirVisual extends IPSModule
 
 	protected function CheckAirVisualConnection()
 	{
-		$check = ["state" => false, "message" => "no connection"];
+		$check = ["state" => "fail", "message" => "no connection"];
 		$command = 'countries?key=';
 		$payload = $this->SendAirVisualAPIRequest($command);
 		$this->SendDebug("AirVisual Response", $payload, 0);
 		$air_visual_response = json_decode($payload, true);
 		$state = $air_visual_response["status"];
-		$this->SendDebug("AirVisual", "Status: " . $state, 0);
+		$this->SendDebug("AirVisual Response", "State: " . $state, 0);
 		if ($state == "fail") {
 			$data = $air_visual_response["data"];
 			$message = $data["message"];
-			$this->SendDebug("AirVisual Error", "Message: " . $message, 0);
-			$check["state"] = $state;
-			$check["message"] = $message;
+			$error_message = $this->ErrorMessages($message);
+			$check["message"] = $error_message;
 			if ($message == "call_per_day_limit_reached") {
-				$check["message"] = "call per day limit reached";
 				$this->SetStatus(206);
 			}
 		} else {
-			$check["state"] = $state; // success
 			$check["message"] = "connection successfull";
+			$this->SetStatus(102);
 		}
 		return $check;
 	}
@@ -1138,7 +1135,7 @@ class AirVisual extends IPSModule
 			);
 		} else {
 			$check = $this->CheckAirVisualConnection();
-			if ($check["state"] == false) {
+			if ($check["state"] == "fail") {
 				$form = array_merge_recursive(
 					$form,
 					[
@@ -1148,6 +1145,7 @@ class AirVisual extends IPSModule
 						]
 					]
 				);
+				$this->SendDebug("AirVisual Form", "Could not get form countries", 0);
 			} else {
 				$form = array_merge_recursive(
 					$form,
@@ -1164,16 +1162,8 @@ class AirVisual extends IPSModule
 		}
 		if ($country != -1 && $api_key != "") {
 			$check = $this->CheckAirVisualConnection();
-			if ($check["state"] == false) {
-				$form = array_merge_recursive(
-					$form,
-					[
-						[
-							'type' => 'Label',
-							'label' => 'AirVisual Error: ' . $check["message"]
-						]
-					]
-				);
+			if ($check["state"] == "fail") {
+				$this->SendDebug("AirVisual Form", "Could not get form state", 0);
 			} else {
 				$form = array_merge_recursive(
 					$form,
@@ -1190,16 +1180,8 @@ class AirVisual extends IPSModule
 		}
 		if ($state != -1 && $api_key != "") {
 			$check = $this->CheckAirVisualConnection();
-			if ($check["state"] == false) {
-				$form = array_merge_recursive(
-					$form,
-					[
-						[
-							'type' => 'Label',
-							'label' => 'AirVisual Error: ' . $check["message"]
-						]
-					]
-				);
+			if ($check["state"] == "fail") {
+				$this->SendDebug("AirVisual Form", "Could not get form city", 0);
 			} else {
 				$form = array_merge_recursive(
 					$form,
