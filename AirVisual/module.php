@@ -1071,6 +1071,7 @@ class AirVisual extends IPSModule
 				$this->SetStatus(206);
 			}
 		} else {
+			$check["state"] = "sucess";
 			$check["message"] = "connection successfull";
 			$this->SetStatus(102);
 		}
@@ -1105,6 +1106,7 @@ class AirVisual extends IPSModule
 		$state = $this->ReadPropertyInteger("state");
 		//$city = $this->ReadPropertyInteger("city");
 		$api_key = $this->ReadPropertyString("api_key");
+		$check = $this->CheckAirVisualConnection();
 		$form = [
 			[
 				'type' => 'Label',
@@ -1134,7 +1136,6 @@ class AirVisual extends IPSModule
 				]
 			);
 		} else {
-			$check = $this->CheckAirVisualConnection();
 			if ($check["state"] == "fail") {
 				$form = array_merge_recursive(
 					$form,
@@ -1161,7 +1162,6 @@ class AirVisual extends IPSModule
 			}
 		}
 		if ($country != -1 && $api_key != "") {
-			$check = $this->CheckAirVisualConnection();
 			if ($check["state"] == "fail") {
 				$this->SendDebug("AirVisual Form", "Could not get form state", 0);
 			} else {
@@ -1179,7 +1179,6 @@ class AirVisual extends IPSModule
 			}
 		}
 		if ($state != -1 && $api_key != "") {
-			$check = $this->CheckAirVisualConnection();
 			if ($check["state"] == "fail") {
 				$this->SendDebug("AirVisual Form", "Could not get form city", 0);
 			} else {
