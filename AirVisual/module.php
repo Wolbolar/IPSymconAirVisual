@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (@constant('IPS_BASE') == null) //Nur wenn Konstanten noch nicht bekannt sind.
 {
     // --- BASE MESSAGE
@@ -146,7 +148,7 @@ if (@constant('IPS_BASE') == null) //Nur wenn Konstanten noch nicht bekannt sind
     define('vtObject', 9);
 }
 
-require_once(__DIR__ . "/../bootstrap.php");
+require_once __DIR__ . '/../bootstrap.php';
 
 use Fonzo\IPS\IPSVarType;
 
@@ -154,7 +156,6 @@ use Fonzo\IPS\IPSVarType;
 
 class AirVisual extends IPSModule
 {
-
     public function Create()
     {
         //Never delete this line!
@@ -226,7 +227,7 @@ class AirVisual extends IPSModule
         $this->RegisterPropertyString('api_key', '');
         $this->RegisterPropertyInteger('UpdateInterval', 60);
         $this->RegisterTimer('AirVisualDataUpdate', 0, 'AirVisual_DataUpdate(' . $this->InstanceID . ');');
-        $this->RegisterVariableString('airvisual_earth_3d', $this->Translate("AirVisual Earth"), '~HTMLBox', 1);
+        $this->RegisterVariableString('airvisual_earth_3d', $this->Translate('AirVisual Earth'), '~HTMLBox', 1);
 
         //we will wait until the kernel is ready
         $this->RegisterMessage(0, IPS_KERNELMESSAGE);
@@ -246,44 +247,41 @@ class AirVisual extends IPSModule
 
     /**
      * Die folgenden Funktionen stehen automatisch zur Verfügung, wenn das Modul über die "Module Control" eingefügt wurden.
-     * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfügung gestellt:
-     *
-     *
+     * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfügung gestellt:.
      */
-
     private function ValidateConfiguration()
     {
         $api_key = $this->ReadPropertyString('api_key');
 
         // api key
-        if ($api_key == "") {
+        if ($api_key == '') {
             $this->SetStatus(205); // field must not be empty
         } else {
-            $this->RegisterVariableString("location", $this->Translate("Location"), "", 2);
+            $this->RegisterVariableString('location', $this->Translate('Location'), '', 2);
             $associations = [
-                [0, $this->Translate("Good %d"), "", 0x74DF00], // 0 - 50 green
-                [51, $this->Translate("Moderate %d"), "", 0xF7FE2E], // 51 - 100 yellow
-                [101, $this->Translate("Unhealthy for Sensitive Groups %d"), "", 0xFF8000], // 101 - 150 orange
-                [151, $this->Translate("Unhealthy %d"), "", 0xFF0000], // 151 - 200 red
-                [201, $this->Translate("Very Unhealthy %d"), "", 0x8A0886], // 201 - 300 purple
-                [301, $this->Translate("Hazardous %d"), "", 0x3B0B17] // 301 - 500 maroon
+                [0, $this->Translate('Good %d'), '', 0x74DF00], // 0 - 50 green
+                [51, $this->Translate('Moderate %d'), '', 0xF7FE2E], // 51 - 100 yellow
+                [101, $this->Translate('Unhealthy for Sensitive Groups %d'), '', 0xFF8000], // 101 - 150 orange
+                [151, $this->Translate('Unhealthy %d'), '', 0xFF0000], // 151 - 200 red
+                [201, $this->Translate('Very Unhealthy %d'), '', 0x8A0886], // 201 - 300 purple
+                [301, $this->Translate('Hazardous %d'), '', 0x3B0B17] // 301 - 500 maroon
             ];
-            $this->RegisterProfileAssociation("AirVisual.aqius", "Factory", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
-            $this->RegisterVariableFloat("aqius", $this->Translate("AQI US"), "AirVisual.aqius", 3);
-            $this->RegisterProfileAssociation("AirVisual.mainus", "Factory", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
+            $this->RegisterProfileAssociation('AirVisual.aqius', 'Factory', '', '', 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
+            $this->RegisterVariableFloat('aqius', $this->Translate('AQI US'), 'AirVisual.aqius', 3);
+            $this->RegisterProfileAssociation('AirVisual.mainus', 'Factory', '', '', 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
             //$this->RegisterVariableFloat("mainus", $this->Translate("Main US"), "AirVisual.mainus", 4);
-            $this->RegisterProfileAssociation("AirVisual.aqicn", "Factory", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
+            $this->RegisterProfileAssociation('AirVisual.aqicn', 'Factory', '', '', 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
             //$this->RegisterVariableFloat("aqicn", $this->Translate("AQI China"), "AirVisual.aqicn", 5);
-            $this->RegisterProfileAssociation("AirVisual.maincn", "Factory", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
+            $this->RegisterProfileAssociation('AirVisual.maincn', 'Factory', '', '', 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
             //$this->RegisterVariableFloat("maincn", $this->Translate("Main China"), "AirVisual.maincn", 6);
 
-            $this->RegisterVariableFloat("humidity", $this->Translate("Humidity"), "~Humidity.F", 10);
-            $this->RegisterProfileAssociation("AirVisual.ic", "Moon", "", "", 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
-            $this->RegisterVariableString("ic", $this->Translate("ic"), "", 11);
-            $this->RegisterVariableFloat("pressure", $this->Translate("Pressure"), "~AirPressure.F", 12);
-            $this->RegisterVariableFloat("temperature", $this->Translate("Temperature"), "~Temperature", 13);
-            $this->RegisterVariableFloat("winddirection", $this->Translate("Wind Direction"), "~WindDirection.F", 14);
-            $this->RegisterVariableFloat("windspeed", $this->Translate("Wind Speed"), "~WindSpeed.kmh", 15);
+            $this->RegisterVariableFloat('humidity', $this->Translate('Humidity'), '~Humidity.F', 10);
+            $this->RegisterProfileAssociation('AirVisual.ic', 'Moon', '', '', 0, 500, 0, 0, IPSVarType::vtFloat, $associations);
+            $this->RegisterVariableString('ic', $this->Translate('ic'), '', 11);
+            $this->RegisterVariableFloat('pressure', $this->Translate('Pressure'), '~AirPressure.F', 12);
+            $this->RegisterVariableFloat('temperature', $this->Translate('Temperature'), '~Temperature', 13);
+            $this->RegisterVariableFloat('winddirection', $this->Translate('Wind Direction'), '~WindDirection.F', 14);
+            $this->RegisterVariableFloat('windspeed', $this->Translate('Wind Speed'), '~WindSpeed.kmh', 15);
             $this->SetVisualEarth();
             $this->SetUpdateIntervall();
             // Status Aktiv
@@ -313,35 +311,35 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * Set Timer Intervall
+     * Set Timer Intervall.
      */
     protected function SetUpdateIntervall()
     {
-        $interval = ($this->ReadPropertyInteger("UpdateInterval")) * 1000; // interval seconds
-        $this->SendDebug("AirVisual", "Set update interval to " . $interval . " seconds", 0);
-        $this->SetTimerInterval("AirVisualDataUpdate", $interval);
+        $interval = ($this->ReadPropertyInteger('UpdateInterval')) * 1000; // interval seconds
+        $this->SendDebug('AirVisual', 'Set update interval to ' . $interval . ' seconds', 0);
+        $this->SetTimerInterval('AirVisualDataUpdate', $interval);
     }
 
     /**
-     * Update Data
+     * Update Data.
      */
     public function DataUpdate()
     {
-        $city_value    = $this->ReadPropertyInteger("city");
+        $city_value    = $this->ReadPropertyInteger('city');
         $city          = $this->CitiesList($city_value);
-        $state_value   = $this->ReadPropertyInteger("state");
+        $state_value   = $this->ReadPropertyInteger('state');
         $state         = $this->StatesList($state_value);
-        $country_value = $this->ReadPropertyInteger("country");
+        $country_value = $this->ReadPropertyInteger('country');
         $country       = $this->CountriesList($country_value);
-        $this->SendDebug("AirVisual Request", "Get data for location :" . $city . " (" . $state . "/" . $country . ")", 0);
-        if ($city != "") {
+        $this->SendDebug('AirVisual Request', 'Get data for location :' . $city . ' (' . $state . '/' . $country . ')', 0);
+        if ($city != '') {
             $data = $this->GetCityData($city, $state, $country);
         } else {
             $data_city = $this->GetNearestCityData();
             $data      = json_decode($data_city);
             $status    = $data->status;
-            if ($status == "success") {
-                $this->SendDebug("AirVisual", "Get nearest city data successfull", 0);
+            if ($status == 'success') {
+                $this->SendDebug('AirVisual', 'Get nearest city data successfull', 0);
                 $this->WriteCityData($data);
             }
         }
@@ -349,26 +347,26 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * Get list of countries for selection form
+     * Get list of countries for selection form.
      */
     public function GetSelectionCountries()
     {
-        $available_countries = $this->ReadAttributeString("available_countries");
-        if ($available_countries == "") {
-            $this->SendDebug("AirVisual", "no countries, get countries from AirVisual", 0);
+        $available_countries = $this->ReadAttributeString('available_countries');
+        if ($available_countries == '') {
+            $this->SendDebug('AirVisual', 'no countries, get countries from AirVisual', 0);
             $payload = $this->ListSupportedCountries();
             $list    = json_decode($payload, true);
-            $status  = $list["status"];
-            if ($status == "success") {
-                $available_countries = $list["data"];
+            $status  = $list['status'];
+            if ($status == 'success') {
+                $available_countries = $list['data'];
                 $countries           = [];
                 foreach ($available_countries as $key => $country) {
-                    $countries[] = $country["country"];
+                    $countries[] = $country['country'];
                 }
-                $this->WriteAttributeString("available_countries", json_encode($countries));
+                $this->WriteAttributeString('available_countries', json_encode($countries));
                 return $countries;
             } else {
-                $this->SendDebug("AirVisual", "could not get countries list", 0);
+                $this->SendDebug('AirVisual', 'could not get countries list', 0);
                 return false;
             }
         } else {
@@ -378,7 +376,7 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * Get list of states for selection form
+     * Get list of states for selection form.
      *
      * @return array|bool
      */
@@ -388,94 +386,94 @@ class AirVisual extends IPSModule
         $country       = $this->CountriesList($country_value);
         if ($country_value == -1) {
             $this->SetStatus(201);
-            $this->SendDebug("AirVisual", "no country selected", 0);
+            $this->SendDebug('AirVisual', 'no country selected', 0);
             return false;
-        } elseif ($country_value == 24 && $country == "Germany") {
-            $available_states = $this->ReadPropertyString("states_germany");
+        } elseif ($country_value == 24 && $country == 'Germany') {
+            $available_states = $this->ReadPropertyString('states_germany');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 4 && $country == "Austria") {
-            $available_states = $this->ReadPropertyString("states_austria");
+        } elseif ($country_value == 4 && $country == 'Austria') {
+            $available_states = $this->ReadPropertyString('states_austria');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 65 && $country == "Switzerland") {
-            $available_states = $this->ReadPropertyString("states_switzerland");
+        } elseif ($country_value == 65 && $country == 'Switzerland') {
+            $available_states = $this->ReadPropertyString('states_switzerland');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 73 && $country == "United Kingdom") {
-            $available_states = $this->ReadPropertyString("states_uk");
+        } elseif ($country_value == 73 && $country == 'United Kingdom') {
+            $available_states = $this->ReadPropertyString('states_uk');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 70 && $country == "USA") {
-            $available_states = $this->ReadPropertyString("states_usa");
+        } elseif ($country_value == 70 && $country == 'USA') {
+            $available_states = $this->ReadPropertyString('states_usa');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 14 && $country == "China") {
-            $available_states = $this->ReadPropertyString("states_china");
+        } elseif ($country_value == 14 && $country == 'China') {
+            $available_states = $this->ReadPropertyString('states_china');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 23 && $country == "France") {
-            $available_states = $this->ReadPropertyString("states_france");
+        } elseif ($country_value == 23 && $country == 'France') {
+            $available_states = $this->ReadPropertyString('states_france');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 8 && $country == "Belgium") {
-            $available_states = $this->ReadPropertyString("states_belgium");
+        } elseif ($country_value == 8 && $country == 'Belgium') {
+            $available_states = $this->ReadPropertyString('states_belgium');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 12 && $country == "Canada") {
-            $available_states = $this->ReadPropertyString("states_canada");
+        } elseif ($country_value == 12 && $country == 'Canada') {
+            $available_states = $this->ReadPropertyString('states_canada');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 19 && $country == "Denmark") {
-            $available_states = $this->ReadPropertyString("states_denmark");
+        } elseif ($country_value == 19 && $country == 'Denmark') {
+            $available_states = $this->ReadPropertyString('states_denmark');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 27 && $country == "India") {
-            $available_states = $this->ReadPropertyString("states_india");
+        } elseif ($country_value == 27 && $country == 'India') {
+            $available_states = $this->ReadPropertyString('states_india');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 32 && $country == "Italy") {
-            $available_states = $this->ReadPropertyString("states_italy");
+        } elseif ($country_value == 32 && $country == 'Italy') {
+            $available_states = $this->ReadPropertyString('states_italy');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 33 && $country == "Japan") {
-            $available_states = $this->ReadPropertyString("states_japan");
+        } elseif ($country_value == 33 && $country == 'Japan') {
+            $available_states = $this->ReadPropertyString('states_japan');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 45 && $country == "Netherlands") {
-            $available_states = $this->ReadPropertyString("states_netherlands");
+        } elseif ($country_value == 45 && $country == 'Netherlands') {
+            $available_states = $this->ReadPropertyString('states_netherlands');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 52 && $country == "Poland") {
-            $available_states = $this->ReadPropertyString("states_poland");
+        } elseif ($country_value == 52 && $country == 'Poland') {
+            $available_states = $this->ReadPropertyString('states_poland');
             $states           = json_decode($available_states, true);
             return $states;
-        } elseif ($country_value == 62 && $country == "Spain") {
-            $available_states = $this->ReadPropertyString("states_spain");
+        } elseif ($country_value == 62 && $country == 'Spain') {
+            $available_states = $this->ReadPropertyString('states_spain');
             $states           = json_decode($available_states, true);
             return $states;
         } else {
             $payload = $this->ListStates($country);
             $list    = json_decode($payload, true);
-            $status  = $list["status"];
-            if ($status == "success") {
-                $available_states = $list["data"];
+            $status  = $list['status'];
+            if ($status == 'success') {
+                $available_states = $list['data'];
                 $states           = [];
                 foreach ($available_states as $key => $state) {
-                    $states[] = $state["state"];
+                    $states[] = $state['state'];
                 }
-                $this->WriteAttributeString("available_states", json_encode($states));
-                $this->SendDebug("AirVisual", "states: " . json_encode($states), 0);
+                $this->WriteAttributeString('available_states', json_encode($states));
+                $this->SendDebug('AirVisual', 'states: ' . json_encode($states), 0);
                 return $states;
             } else {
-                $this->SendDebug("AirVisual", "could not get states list", 0);
+                $this->SendDebug('AirVisual', 'could not get states list', 0);
                 return false;
             }
         }
     }
 
     /**
-     * Get list of coties for selection form
+     * Get list of coties for selection form.
      *
      * @return array|bool
      */
@@ -485,58 +483,58 @@ class AirVisual extends IPSModule
         $state_value   = $this->GetStateValue();
         if ($country_value == -1) {
             $this->SetStatus(201);
-            $this->SendDebug("AirVisual", "no country selected", 0);
+            $this->SendDebug('AirVisual', 'no country selected', 0);
             return false;
         } elseif ($state_value == -1) {
             $this->SetStatus(202);
-            $this->SendDebug("AirVisual", "no state selected", 0);
+            $this->SendDebug('AirVisual', 'no state selected', 0);
             return false;
         } else {
             $country = $this->CountriesList($country_value);
             $state   = $this->StatesList($state_value);
             $payload = $this->ListCities($state, $country);
             $list    = json_decode($payload, true);
-            $status  = $list["status"];
-            if ($status == "success") {
-                $available_cities = $list["data"];
+            $status  = $list['status'];
+            if ($status == 'success') {
+                $available_cities = $list['data'];
                 $cities           = [];
                 foreach ($available_cities as $key => $city) {
-                    $cities[] = $city["city"];
+                    $cities[] = $city['city'];
                 }
-                $this->WriteAttributeString("available_cities", json_encode($cities));
+                $this->WriteAttributeString('available_cities', json_encode($cities));
                 return $cities;
             } else {
-                $this->SendDebug("AirVisual", "could not get cities list", 0);
+                $this->SendDebug('AirVisual', 'could not get cities list', 0);
                 return false;
             }
         }
     }
 
     /**
-     * Get city selection
+     * Get city selection.
      *
      * @return bool
      */
     protected function GetCityValue()
     {
-        $city_value = $this->ReadPropertyInteger("city");
-        $this->SendDebug("AirVisual", "City selected: " . $city_value, 0);
+        $city_value = $this->ReadPropertyInteger('city');
+        $this->SendDebug('AirVisual', 'City selected: ' . $city_value, 0);
         return $city_value;
     }
 
     /**
-     * Set city selection
+     * Set city selection.
      *
      * @param $city_value
      */
     protected function SetCityValue($city_value)
     {
-        IPS_SetProperty($this->InstanceID, "city", $city_value);
+        IPS_SetProperty($this->InstanceID, 'city', $city_value);
         IPS_ApplyChanges($this->InstanceID);
     }
 
     /**
-     * Get city for the selection
+     * Get city for the selection.
      *
      * @param $city_value
      *
@@ -544,47 +542,47 @@ class AirVisual extends IPSModule
      */
     protected function CitiesList(int $city_value)
     {
-        $available_cities = $this->ReadAttributeString("available_cities");
-        if ($available_cities == "") {
-            $this->SendDebug("AirVisual", "no city, get cities from AirVisual", 0);
+        $available_cities = $this->ReadAttributeString('available_cities');
+        if ($available_cities == '') {
+            $this->SendDebug('AirVisual', 'no city, get cities from AirVisual', 0);
             $cities = $this->GetSelectionCities();
 
         } else {
             $cities = json_decode($available_cities, true);
         }
 
-        $this->SendDebug("AirVisual", "state selection number " . $city_value, 0);
-        $this->SendDebug("AirVisual States", $available_cities, 0);
+        $this->SendDebug('AirVisual', 'state selection number ' . $city_value, 0);
+        $this->SendDebug('AirVisual States', $available_cities, 0);
         $city = $cities[$city_value];
-        $this->SendDebug("AirVisual", "state selected " . $city, 0);
+        $this->SendDebug('AirVisual', 'state selected ' . $city, 0);
         return $city;
     }
 
     /**
-     * Get state selection
+     * Get state selection.
      *
      * @return bool
      */
     protected function GetStateValue()
     {
-        $states_value = $this->ReadPropertyInteger("state");
-        $this->SendDebug("AirVisual", "State selected: " . $states_value, 0);
+        $states_value = $this->ReadPropertyInteger('state');
+        $this->SendDebug('AirVisual', 'State selected: ' . $states_value, 0);
         return $states_value;
     }
 
     /**
-     * Set state selection
+     * Set state selection.
      *
      * @param $states_value
      */
     protected function SetStateValue($states_value)
     {
-        IPS_SetProperty($this->InstanceID, "state", $states_value);
+        IPS_SetProperty($this->InstanceID, 'state', $states_value);
         IPS_ApplyChanges($this->InstanceID);
     }
 
     /**
-     * Get state for the selection
+     * Get state for the selection.
      *
      * @param $state_value
      *
@@ -594,93 +592,93 @@ class AirVisual extends IPSModule
     {
         $country_value    = $this->GetCountriesValue();
         $country          = $this->CountriesList($country_value);
-        $available_states = $this->ReadAttributeString("available_states");
-        if ($country_value == 24 && $country == "Germany") {
-            $available_states = $this->ReadPropertyString("states_germany");
+        $available_states = $this->ReadAttributeString('available_states');
+        if ($country_value == 24 && $country == 'Germany') {
+            $available_states = $this->ReadPropertyString('states_germany');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 4 && $country == "Austria") {
-            $available_states = $this->ReadPropertyString("states_austria");
+        } elseif ($country_value == 4 && $country == 'Austria') {
+            $available_states = $this->ReadPropertyString('states_austria');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 65 && $country == "Switzerland") {
-            $available_states = $this->ReadPropertyString("states_switzerland");
+        } elseif ($country_value == 65 && $country == 'Switzerland') {
+            $available_states = $this->ReadPropertyString('states_switzerland');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 73 && $country == "United Kingdom") {
-            $available_states = $this->ReadPropertyString("states_uk");
+        } elseif ($country_value == 73 && $country == 'United Kingdom') {
+            $available_states = $this->ReadPropertyString('states_uk');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 70 && $country == "USA") {
-            $available_states = $this->ReadPropertyString("states_usa");
+        } elseif ($country_value == 70 && $country == 'USA') {
+            $available_states = $this->ReadPropertyString('states_usa');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 14 && $country == "China") {
-            $available_states = $this->ReadPropertyString("states_china");
+        } elseif ($country_value == 14 && $country == 'China') {
+            $available_states = $this->ReadPropertyString('states_china');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 23 && $country == "France") {
-            $available_states = $this->ReadPropertyString("states_france");
+        } elseif ($country_value == 23 && $country == 'France') {
+            $available_states = $this->ReadPropertyString('states_france');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 8 && $country == "Belgium") {
-            $available_states = $this->ReadPropertyString("states_belgium");
+        } elseif ($country_value == 8 && $country == 'Belgium') {
+            $available_states = $this->ReadPropertyString('states_belgium');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 12 && $country == "Canada") {
-            $available_states = $this->ReadPropertyString("states_canada");
+        } elseif ($country_value == 12 && $country == 'Canada') {
+            $available_states = $this->ReadPropertyString('states_canada');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 19 && $country == "Denmark") {
-            $available_states = $this->ReadPropertyString("states_denmark");
+        } elseif ($country_value == 19 && $country == 'Denmark') {
+            $available_states = $this->ReadPropertyString('states_denmark');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 27 && $country == "India") {
-            $available_states = $this->ReadPropertyString("states_india");
+        } elseif ($country_value == 27 && $country == 'India') {
+            $available_states = $this->ReadPropertyString('states_india');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 32 && $country == "Italy") {
-            $available_states = $this->ReadPropertyString("states_italy");
+        } elseif ($country_value == 32 && $country == 'Italy') {
+            $available_states = $this->ReadPropertyString('states_italy');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 33 && $country == "Japan") {
-            $available_states = $this->ReadPropertyString("states_japan");
+        } elseif ($country_value == 33 && $country == 'Japan') {
+            $available_states = $this->ReadPropertyString('states_japan');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 45 && $country == "Netherlands") {
-            $available_states = $this->ReadPropertyString("states_netherlands");
+        } elseif ($country_value == 45 && $country == 'Netherlands') {
+            $available_states = $this->ReadPropertyString('states_netherlands');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 52 && $country == "Poland") {
-            $available_states = $this->ReadPropertyString("states_poland");
+        } elseif ($country_value == 52 && $country == 'Poland') {
+            $available_states = $this->ReadPropertyString('states_poland');
             $states           = json_decode($available_states, true);
-        } elseif ($country_value == 62 && $country == "Spain") {
-            $available_states = $this->ReadPropertyString("states_spain");
+        } elseif ($country_value == 62 && $country == 'Spain') {
+            $available_states = $this->ReadPropertyString('states_spain');
             $states           = json_decode($available_states, true);
-        } elseif ($available_states == "") {
-            $this->SendDebug("AirVisual", "no states, get states from AirVisual", 0);
+        } elseif ($available_states == '') {
+            $this->SendDebug('AirVisual', 'no states, get states from AirVisual', 0);
             $states = $this->GetSelectionStates();
         } else {
             $states = json_decode($available_states, true);
         }
-        $this->SendDebug("AirVisual", "state selection number " . $state_value, 0);
-        $this->SendDebug("AirVisual States", $available_states, 0);
+        $this->SendDebug('AirVisual', 'state selection number ' . $state_value, 0);
+        $this->SendDebug('AirVisual States', $available_states, 0);
         $state = $states[$state_value];
-        $this->SendDebug("AirVisual", "state selected " . $state, 0);
+        $this->SendDebug('AirVisual', 'state selected ' . $state, 0);
         return $state;
     }
 
     /**
-     * Get country selection
+     * Get country selection.
      *
      * @return bool
      */
     protected function GetCountriesValue()
     {
-        $countries_value = $this->ReadPropertyInteger("country");
-        $this->SendDebug("AirVisual", "Country selected: " . $countries_value, 0);
+        $countries_value = $this->ReadPropertyInteger('country');
+        $this->SendDebug('AirVisual', 'Country selected: ' . $countries_value, 0);
         return $countries_value;
     }
 
     /**
-     * Set country selection
+     * Set country selection.
      *
      * @param $countries_value
      */
     protected function SetCountriesValue($countries_value)
     {
-        IPS_SetProperty($this->InstanceID, "country", $countries_value);
+        IPS_SetProperty($this->InstanceID, 'country', $countries_value);
         IPS_ApplyChanges($this->InstanceID);
     }
 
     /**
-     * Get country for the selection
+     * Get country for the selection.
      *
      * @param $country_value
      *
@@ -688,38 +686,38 @@ class AirVisual extends IPSModule
      */
     protected function CountriesList(int $country_value)
     {
-        $available_countries = $this->ReadAttributeString("available_countries");
-        if ($available_countries == "") {
-            $this->SendDebug("AirVisual", "no countries, get countries from AirVisual", 0);
+        $available_countries = $this->ReadAttributeString('available_countries');
+        if ($available_countries == '') {
+            $this->SendDebug('AirVisual', 'no countries, get countries from AirVisual', 0);
             $countries = $this->GetSelectionCountries();
             // todo check false
         } else {
             $countries = json_decode($available_countries, true);
         }
-        $this->SendDebug("AirVisual", "country selection number " . $country_value, 0);
-        $this->SendDebug("AirVisual States", $available_countries, 0);
+        $this->SendDebug('AirVisual', 'country selection number ' . $country_value, 0);
+        $this->SendDebug('AirVisual States', $available_countries, 0);
         $country = $countries[$country_value];
-        $this->SendDebug("AirVisual", "country selected " . $country, 0);
+        $this->SendDebug('AirVisual', 'country selected ' . $country, 0);
         return $country;
     }
 
     /**
-     * Set Value Visual Earth 3D
+     * Set Value Visual Earth 3D.
      */
     private function SetVisualEarth()
     {
-        $airvisual_earth = GetValue($this->GetIDForIdent("airvisual_earth_3d"));
-        if ($airvisual_earth == "") {
-            $web_url = "https://www.airvisual.com/earth"; // URL AirVisual Earth
-            $height  = "450px"; // height
-            $width   = "100%"; // width
+        $airvisual_earth = GetValue($this->GetIDForIdent('airvisual_earth_3d'));
+        if ($airvisual_earth == '') {
+            $web_url = 'https://www.airvisual.com/earth'; // URL AirVisual Earth
+            $height  = '450px'; // height
+            $width   = '100%'; // width
             $content = '<iframe src="' . $web_url . '" frameborder="0" style= "width: ' . $width . '; height: ' . $height . ';"/></iframe>';
-            $this->SetValue("airvisual_earth_3d", $content);
+            $this->SetValue('airvisual_earth_3d', $content);
         }
     }
 
     /**
-     * List supported countries
+     * List supported countries.
      *
      * @return mixed|string
      */
@@ -727,12 +725,12 @@ class AirVisual extends IPSModule
     {
         $command  = 'countries?key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
     /**
-     * List supported states in a country
+     * List supported states in a country.
      *
      * @param string $country
      *
@@ -743,12 +741,12 @@ class AirVisual extends IPSModule
         $country  = urlencode($country);
         $command  = 'states?country=' . $country . '&key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
     /**
-     * List supported cities in a state
+     * List supported cities in a state.
      *
      * @param $state
      * @param $country
@@ -761,12 +759,12 @@ class AirVisual extends IPSModule
         $country  = urlencode($country);
         $command  = 'cities?state=' . $state . '&country=' . $country . '&key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
     /**
-     * Get nearest city data (IP geolocation)
+     * Get nearest city data (IP geolocation).
      *
      * @return mixed|string
      */
@@ -774,19 +772,19 @@ class AirVisual extends IPSModule
     {
         $command   = 'nearest_city?key=';
         $data_city = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $data_city, 0);
+        $this->SendDebug('AirVisual Response', $data_city, 0);
         $data   = json_decode($data_city);
         $status = $data->status;
-        $this->SendDebug("AirVisual Request Status", $status, 0);
-        if ($status == "success") {
-            $this->SendDebug("AirVisual", "Get city data successfull", 0);
+        $this->SendDebug('AirVisual Request Status', $status, 0);
+        if ($status == 'success') {
+            $this->SendDebug('AirVisual', 'Get city data successfull', 0);
             $this->WriteCityData($data);
         }
         return $data_city;
     }
 
     /**
-     * Get nearest city data (GPS coordinates)
+     * Get nearest city data (GPS coordinates).
      *
      * @param float $latitude
      * @param float $longitude
@@ -797,20 +795,19 @@ class AirVisual extends IPSModule
     {
         $command   = 'nearest_city?lat=' . $latitude . '&lon=' . $longitude . '&key=';
         $data_city = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $data_city, 0);
+        $this->SendDebug('AirVisual Response', $data_city, 0);
         $data   = json_decode($data_city);
         $status = $data->status;
-        $this->SendDebug("AirVisual Request Status", $status, 0);
-        if ($status == "success") {
-            $this->SendDebug("AirVisual", "Get city data successfull", 0);
+        $this->SendDebug('AirVisual Request Status', $status, 0);
+        if ($status == 'success') {
+            $this->SendDebug('AirVisual', 'Get city data successfull', 0);
             $this->WriteCityData($data);
         }
         return $data_city;
     }
 
-
     /**
-     * Get specified city data
+     * Get specified city data.
      *
      * @param string $city
      * @param string $state
@@ -824,16 +821,16 @@ class AirVisual extends IPSModule
         $country   = urlencode($country);
         $command   = 'city?city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
         $data_city = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $data_city, 0);
+        $this->SendDebug('AirVisual Response', $data_city, 0);
         if (empty($data_city)) {
-            $this->SendDebug("AirVisual Request Status", "no respone for this city", 0);
-            return "";
+            $this->SendDebug('AirVisual Request Status', 'no respone for this city', 0);
+            return '';
         } else {
             $data   = json_decode($data_city);
             $status = $data->status;
-            $this->SendDebug("AirVisual Request Status", $status, 0);
-            if ($status == "success") {
-                $this->SendDebug("AirVisual", "Get city data successfull", 0);
+            $this->SendDebug('AirVisual Request Status', $status, 0);
+            if ($status == 'success') {
+                $this->SendDebug('AirVisual', 'Get city data successfull', 0);
                 $this->WriteCityData($data);
             }
             return $data_city;
@@ -841,64 +838,64 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * Write data to variables
+     * Write data to variables.
      *
      * @param $data
      */
     protected function WriteCityData($data)
     {
         $city = $data->data->city;
-        $this->SendDebug("AirVisual", "City: " . $city, 0);
+        $this->SendDebug('AirVisual', 'City: ' . $city, 0);
         $state = $data->data->state;
-        $this->SendDebug("AirVisual", "State: " . $state, 0);
+        $this->SendDebug('AirVisual', 'State: ' . $state, 0);
         $country = $data->data->country;
-        $this->SendDebug("AirVisual", "Country: " . $country, 0);
-        $this->SetValue("location", $city . " (" . $this->Translate($state) . "/" . $this->Translate($country) . ")");
+        $this->SendDebug('AirVisual', 'Country: ' . $country, 0);
+        $this->SetValue('location', $city . ' (' . $this->Translate($state) . '/' . $this->Translate($country) . ')');
         $location  = $data->data->location->coordinates;
         $longitude = $location[0];
         $latitude  = $location[1];
-        $this->SendDebug("AirVisual", "Longitude: " . $longitude, 0);
-        $this->SendDebug("AirVisual", "Latitude: " . $latitude, 0);
+        $this->SendDebug('AirVisual', 'Longitude: ' . $longitude, 0);
+        $this->SendDebug('AirVisual', 'Latitude: ' . $latitude, 0);
 
         $weather    = $data->data->current->weather;
         $weather_ts = $weather->ts;
-        $this->SendDebug("AirVisual", "Weather Timestamp: " . $weather_ts, 0);
+        $this->SendDebug('AirVisual', 'Weather Timestamp: ' . $weather_ts, 0);
         $humidity = $weather->hu ? floatval($weather->hu) : 0;
-        $this->SendDebug("AirVisual", "Humidity: " . $humidity, 0);
-        $this->SetValue("humidity", $humidity);
-        $ic = isset($weather->ic) ? $weather->ic : "";
-        $this->SendDebug("AirVisual", "ic: " . $ic, 0);
-        $this->SetValue("ic", $ic);
+        $this->SendDebug('AirVisual', 'Humidity: ' . $humidity, 0);
+        $this->SetValue('humidity', $humidity);
+        $ic = isset($weather->ic) ? $weather->ic : '';
+        $this->SendDebug('AirVisual', 'ic: ' . $ic, 0);
+        $this->SetValue('ic', $ic);
 
         $pressure = isset($weather->pr) ? floatval($weather->pr) : 0;
-        $this->SendDebug("AirVisual", "Pressure: " . $pressure, 0);
-        $this->SetValue("pressure", $pressure);
+        $this->SendDebug('AirVisual', 'Pressure: ' . $pressure, 0);
+        $this->SetValue('pressure', $pressure);
         $temperature = isset($weather->tp) ? floatval($weather->tp) : 0;
-        $this->SendDebug("AirVisual", "Temperature: " . $temperature, 0);
-        $this->SetValue("temperature", $temperature);
+        $this->SendDebug('AirVisual', 'Temperature: ' . $temperature, 0);
+        $this->SetValue('temperature', $temperature);
         $winddirection = isset($weather->wd) ? floatval($weather->wd) : 0;
-        $this->SendDebug("AirVisual", "Winddirection: " . $winddirection, 0);
-        $this->SetValue("winddirection", $winddirection);
+        $this->SendDebug('AirVisual', 'Winddirection: ' . $winddirection, 0);
+        $this->SetValue('winddirection', $winddirection);
         $windspeed = isset($weather->ws) ? floatval($weather->ws) : 0;
-        $this->SendDebug("AirVisual", "Windspeed: " . $windspeed, 0);
-        $this->SetValue("windspeed", $windspeed);
+        $this->SendDebug('AirVisual', 'Windspeed: ' . $windspeed, 0);
+        $this->SetValue('windspeed', $windspeed);
 
         $pollution    = $data->data->current->pollution;
         $pollution_ts = $pollution->ts;
-        $this->SendDebug("AirVisual", "Pollution Timestamp: " . $pollution_ts, 0);
+        $this->SendDebug('AirVisual', 'Pollution Timestamp: ' . $pollution_ts, 0);
         $aqius = floatval($pollution->aqius);
-        $this->SendDebug("AirVisual", "AQI US: " . $aqius, 0);
-        $this->SetValue("aqius", $aqius);
+        $this->SendDebug('AirVisual', 'AQI US: ' . $aqius, 0);
+        $this->SetValue('aqius', $aqius);
         $mainus = $pollution->mainus; // string
-        $this->SendDebug("AirVisual", "Main US: " . $mainus, 0);
+        $this->SendDebug('AirVisual', 'Main US: ' . $mainus, 0);
         $aqicn = floatval($pollution->aqicn);
-        $this->SendDebug("AirVisual", "AQI China: " . $aqicn, 0);
+        $this->SendDebug('AirVisual', 'AQI China: ' . $aqicn, 0);
         $maincn = $pollution->maincn; // string
-        $this->SendDebug("AirVisual", "Main China: " . $maincn, 0);
+        $this->SendDebug('AirVisual', 'Main China: ' . $maincn, 0);
     }
 
     /**
-     * List supported stations in a city
+     * List supported stations in a city.
      *
      * @param string $city
      * @param string $state
@@ -912,12 +909,12 @@ class AirVisual extends IPSModule
         $country  = urlencode($country);
         $command  = 'stations?city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
     /**
-     * Get nearest station data (IP geolocation)
+     * Get nearest station data (IP geolocation).
      *
      * @return mixed
      */
@@ -925,13 +922,12 @@ class AirVisual extends IPSModule
     {
         $command  = 'nearest_station?key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
-
     /**
-     * Get nearest station data (GPS coodinates)
+     * Get nearest station data (GPS coodinates).
      *
      * @param float $latitude
      * @param float $longitude
@@ -942,12 +938,12 @@ class AirVisual extends IPSModule
     {
         $command  = 'nearest_station?lat=' . $latitude . '&lon=' . $longitude . '&key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
     /**
-     * Get specified station data
+     * Get specified station data.
      *
      * @param string $station
      * @param string $city
@@ -963,24 +959,24 @@ class AirVisual extends IPSModule
         $country  = urlencode($country);
         $command  = 'station?station=' . $station . '&city=' . $city . '&state=' . $state . '&country=' . $country . '&key=';
         $response = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $response, 0);
+        $this->SendDebug('AirVisual Response', $response, 0);
         return $response;
     }
 
     protected function ErrorMessages($error)
     {
         $error_messages = [
-            "success"                    => "JSON file was generated successfully",
-            "call_limit_reached"         => "minute/monthly limit is reached",
-            "call_per_day_limit_reached" => "call per day limit reached",
-            "api_key_expired"            => "API key is expired",
-            "incorrect_api_key"          => "using wrong API key",
-            "ip_location_failed"         => "service is unable to locate IP address of request",
-            "no_nearest_station"         => "there is no nearest station within specified radius",
-            "feature_not_available"      => "call requests a feature that is not available in chosen subscription plan",
-            "too_many_requests"          => "more than 10 calls per second are made"];
+            'success'                    => 'JSON file was generated successfully',
+            'call_limit_reached'         => 'minute/monthly limit is reached',
+            'call_per_day_limit_reached' => 'call per day limit reached',
+            'api_key_expired'            => 'API key is expired',
+            'incorrect_api_key'          => 'using wrong API key',
+            'ip_location_failed'         => 'service is unable to locate IP address of request',
+            'no_nearest_station'         => 'there is no nearest station within specified radius',
+            'feature_not_available'      => 'call requests a feature that is not available in chosen subscription plan',
+            'too_many_requests'          => 'more than 10 calls per second are made'];
         $error_message  = $error_messages[$error];
-        $this->SendDebug("AirVisual", "Error: " . $error_message, 0);
+        $this->SendDebug('AirVisual', 'Error: ' . $error_message, 0);
         return $error_message;
     }
 
@@ -1001,7 +997,7 @@ class AirVisual extends IPSModule
    */
 
     /**
-     * Send to AirVisual API
+     * Send to AirVisual API.
      *
      * @param $command
      *
@@ -1009,18 +1005,18 @@ class AirVisual extends IPSModule
      */
     protected function SendAirVisualAPIRequest($command)
     {
-        $api_key = $this->ReadPropertyString("api_key");
+        $api_key = $this->ReadPropertyString('api_key');
         $curl    = curl_init();
 
         curl_setopt_array(
             $curl, [
-                     CURLOPT_URL            => "https://api.airvisual.com/v2/" . $command . $api_key,
+                     CURLOPT_URL            => 'https://api.airvisual.com/v2/' . $command . $api_key,
                      CURLOPT_RETURNTRANSFER => true,
-                     CURLOPT_ENCODING       => "",
+                     CURLOPT_ENCODING       => '',
                      CURLOPT_MAXREDIRS      => 10,
                      CURLOPT_TIMEOUT        => 30,
                      CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                     CURLOPT_CUSTOMREQUEST  => "GET",]
+                     CURLOPT_CUSTOMREQUEST  => 'GET', ]
         );
 
         $response = curl_exec($curl);
@@ -1029,18 +1025,18 @@ class AirVisual extends IPSModule
         curl_close($curl);
 
         if ($err) {
-            $this->SendDebug("AirVisual Error", "cURL Error #:" . $err, 0);
-            return "cURL Error #:" . $err;
+            $this->SendDebug('AirVisual Error', 'cURL Error #:' . $err, 0);
+            return 'cURL Error #:' . $err;
         } else {
             $payload             = $response;
             $air_visual_response = json_decode($payload, true);
-            $status              = $air_visual_response["status"];
-            if ($status == "fail") {
-                $this->SendDebug("AirVisual Response", "State: " . $status, 0);
-                $data    = $air_visual_response["data"];
-                $message = $data["message"];
-                $this->SendDebug("AirVisual Error", "Message: " . $message, 0);
-                if ($message == "call_per_day_limit_reached") {
+            $status              = $air_visual_response['status'];
+            if ($status == 'fail') {
+                $this->SendDebug('AirVisual Response', 'State: ' . $status, 0);
+                $data    = $air_visual_response['data'];
+                $message = $data['message'];
+                $this->SendDebug('AirVisual Error', 'Message: ' . $message, 0);
+                if ($message == 'call_per_day_limit_reached') {
                     $this->SetStatus(206);
                 }
             }
@@ -1048,21 +1044,20 @@ class AirVisual extends IPSModule
         }
     }
 
-
     public function RequestAction($Ident, $Value)
     {
         $this->SetValue($Ident, $Value);
         switch ($Ident) {
-            case "airvisual_update":
+            case 'airvisual_update':
                 $this->DataUpdate();
                 break;
             default:
-                $this->SendDebug("AirVisual", "Invalid ident", 0);
+                $this->SendDebug('AirVisual', 'Invalid ident', 0);
         }
     }
 
     /**
-     * gets current IP-Symcon version
+     * gets current IP-Symcon version.
      *
      * @return float|int
      */
@@ -1101,7 +1096,7 @@ class AirVisual extends IPSModule
         } else {
             $profile = IPS_GetVariableProfile($Name);
             if ($profile['ProfileType'] != $Vartype) {
-                $this->SendDebug("BMW:", "Variable profile type does not match for profile " . $Name, 0);
+                $this->SendDebug('BMW:', 'Variable profile type does not match for profile ' . $Name, 0);
             }
         }
 
@@ -1115,7 +1110,7 @@ class AirVisual extends IPSModule
 
     protected function RegisterProfileAssociation($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $Stepsize, $Digits, $Vartype, $Associations)
     {
-        if (sizeof($Associations) === 0) {
+        if (count($Associations) === 0) {
             $MinValue = 0;
             $MaxValue = 0;
         }
@@ -1131,24 +1126,24 @@ class AirVisual extends IPSModule
 
     protected function CheckAirVisualConnection()
     {
-        $check   = ["state" => "fail", "message" => "no connection"];
+        $check   = ['state' => 'fail', 'message' => 'no connection'];
         $command = 'countries?key=';
         $payload = $this->SendAirVisualAPIRequest($command);
-        $this->SendDebug("AirVisual Response", $payload, 0);
+        $this->SendDebug('AirVisual Response', $payload, 0);
         $air_visual_response = json_decode($payload, true);
-        $state               = $air_visual_response["status"];
-        $this->SendDebug("AirVisual Response", "State: " . $state, 0);
-        if ($state == "fail") {
-            $data             = $air_visual_response["data"];
-            $message          = $data["message"];
+        $state               = $air_visual_response['status'];
+        $this->SendDebug('AirVisual Response', 'State: ' . $state, 0);
+        if ($state == 'fail') {
+            $data             = $air_visual_response['data'];
+            $message          = $data['message'];
             $error_message    = $this->ErrorMessages($message);
-            $check["message"] = $error_message;
-            if ($message == "call_per_day_limit_reached") {
+            $check['message'] = $error_message;
+            if ($message == 'call_per_day_limit_reached') {
                 $this->SetStatus(206);
             }
         } else {
-            $check["state"]   = "sucess";
-            $check["message"] = "connection successfull";
+            $check['state']   = 'sucess';
+            $check['message'] = 'connection successfull';
             $this->SetStatus(102);
         }
         return $check;
@@ -1159,7 +1154,7 @@ class AirVisual extends IPSModule
      ***********************************************************/
 
     /**
-     * build configuration form
+     * build configuration form.
      *
      * @return string
      */
@@ -1175,16 +1170,16 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * return form configurations on configuration step
+     * return form configurations on configuration step.
      *
      * @return array
      */
     protected function FormHead()
     {
-        $country = $this->ReadPropertyInteger("country");
-        $state   = $this->ReadPropertyInteger("state");
+        $country = $this->ReadPropertyInteger('country');
+        $state   = $this->ReadPropertyInteger('state');
         //$city = $this->ReadPropertyInteger("city");
-        $api_key = $this->ReadPropertyString("api_key");
+        $api_key = $this->ReadPropertyString('api_key');
         $check   = $this->CheckAirVisualConnection();
         $form    = [
             [
@@ -1199,7 +1194,7 @@ class AirVisual extends IPSModule
                 'type'    => 'IntervalBox',
                 'caption' => 'Seconds']];
 
-        if ($api_key === "") {
+        if ($api_key === '') {
             $form = array_merge_recursive(
                 $form, [
                          [
@@ -1208,14 +1203,14 @@ class AirVisual extends IPSModule
                              'onClick' => 'echo "https://www.airvisual.com";']]
             );
         } else {
-            if ($check["state"] == "fail") {
+            if ($check['state'] == 'fail') {
                 $form = array_merge_recursive(
                     $form, [
                              [
                                  'type'  => 'Label',
-                                 'label' => 'AirVisual Error: ' . $check["message"]]]
+                                 'label' => 'AirVisual Error: ' . $check['message']]]
                 );
-                $this->SendDebug("AirVisual Form", "Could not get form countries", 0);
+                $this->SendDebug('AirVisual Form', 'Could not get form countries', 0);
             } else {
                 $form = array_merge_recursive(
                     $form, [
@@ -1227,9 +1222,9 @@ class AirVisual extends IPSModule
                 );
             }
         }
-        if ($country != -1 && $api_key != "") {
-            if ($check["state"] == "fail") {
-                $this->SendDebug("AirVisual Form", "Could not get form state", 0);
+        if ($country != -1 && $api_key != '') {
+            if ($check['state'] == 'fail') {
+                $this->SendDebug('AirVisual Form', 'Could not get form state', 0);
             } else {
                 $form = array_merge_recursive(
                     $form, [
@@ -1241,9 +1236,9 @@ class AirVisual extends IPSModule
                 );
             }
         }
-        if ($state != -1 && $api_key != "") {
-            if ($check["state"] == "fail") {
-                $this->SendDebug("AirVisual Form", "Could not get form city", 0);
+        if ($state != -1 && $api_key != '') {
+            if ($check['state'] == 'fail') {
+                $this->SendDebug('AirVisual Form', 'Could not get form city', 0);
             } else {
                 $form = array_merge_recursive(
                     $form, [
@@ -1262,7 +1257,7 @@ class AirVisual extends IPSModule
     {
         $form      = [];
         $countries = $this->GetSelectionCountries();
-        $this->SendDebug("AirVisual", json_encode($countries), 0);
+        $this->SendDebug('AirVisual', json_encode($countries), 0);
 
         $form[] = [
             'label' => 'Please choose',
@@ -1279,7 +1274,7 @@ class AirVisual extends IPSModule
     {
         $form   = [];
         $states = $this->GetSelectionStates();
-        $this->SendDebug("AirVisual", json_encode($states), 0);
+        $this->SendDebug('AirVisual', json_encode($states), 0);
 
         $form[] = [
             'label' => 'Please choose',
@@ -1296,7 +1291,7 @@ class AirVisual extends IPSModule
     {
         $form   = [];
         $cities = $this->GetSelectionCities();
-        $this->SendDebug("AirVisual", json_encode($cities), 0);
+        $this->SendDebug('AirVisual', json_encode($cities), 0);
 
         $form[] = [
             'label' => 'Please choose',
@@ -1310,7 +1305,7 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * return form actions
+     * return form actions.
      *
      * @return array
      */
@@ -1336,7 +1331,7 @@ class AirVisual extends IPSModule
     }
 
     /**
-     * return from status
+     * return from status.
      *
      * @return array
      */
@@ -1388,5 +1383,4 @@ class AirVisual extends IPSModule
             SetValue($this->GetIDForIdent($Ident), $Value);
         }
     }
-
 }
