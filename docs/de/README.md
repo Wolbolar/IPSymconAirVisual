@@ -38,7 +38,7 @@ Mit dem Modul lassen Werte von AirVisual auslesen und die Karte in IP-Symcon (ab
 
 ### a. Laden des Moduls
 
-Die Webconsole von IP-Symcon mit _http://<IP-Symcon IP>:3777/console/_ öffnen. 
+Die Webconsole von IP-Symcon mit _http://{IP-Symcon IP}:3777/console/_ öffnen. 
 
 
 Anschließend oben rechts auf das Symbol für den Modulstore (IP-Symcon > 5.1) klicken
