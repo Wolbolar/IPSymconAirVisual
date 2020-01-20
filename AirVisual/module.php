@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -534,7 +535,6 @@ class AirVisual extends IPSModule
         IPS_ApplyChanges($this->InstanceID);
     }
 
-
     /**
      * Get country for the selection.
      *
@@ -867,13 +867,13 @@ class AirVisual extends IPSModule
 
         curl_setopt_array(
             $curl, [
-                     CURLOPT_URL            => 'https://api.airvisual.com/v2/' . $command . $api_key,
-                     CURLOPT_RETURNTRANSFER => true,
-                     CURLOPT_ENCODING       => '',
-                     CURLOPT_MAXREDIRS      => 10,
-                     CURLOPT_TIMEOUT        => 30,
-                     CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-                     CURLOPT_CUSTOMREQUEST  => 'GET', ]
+                CURLOPT_URL            => 'https://api.airvisual.com/v2/' . $command . $api_key,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING       => '',
+                CURLOPT_MAXREDIRS      => 10,
+                CURLOPT_TIMEOUT        => 30,
+                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST  => 'GET', ]
         );
 
         $response = curl_exec($curl);
@@ -1017,28 +1017,28 @@ class AirVisual extends IPSModule
         if ($api_key === '') {
             $form = array_merge_recursive(
                 $form, [
-                         [
-                             'type'    => 'Button',
-                             'label'   => 'Get API Key',
-                             'onClick' => 'echo "https://www.airvisual.com";']]
+                    [
+                        'type'    => 'Button',
+                        'label'   => 'Get API Key',
+                        'onClick' => 'echo "https://www.airvisual.com";']]
             );
         } else {
             if ($check['state'] == 'fail') {
                 $form = array_merge_recursive(
                     $form, [
-                             [
-                                 'type'  => 'Label',
-                                 'label' => 'AirVisual Error: ' . $check['message']]]
+                        [
+                            'type'  => 'Label',
+                            'label' => 'AirVisual Error: ' . $check['message']]]
                 );
                 $this->SendDebug('AirVisual Form', 'Could not get form countries', 0);
             } else {
                 $form = array_merge_recursive(
                     $form, [
-                             [
-                                 'name'    => 'country',
-                                 'type'    => 'Select',
-                                 'caption' => 'Country',
-                                 'options' => $this->GetFormCountry()]]
+                        [
+                            'name'    => 'country',
+                            'type'    => 'Select',
+                            'caption' => 'Country',
+                            'options' => $this->GetFormCountry()]]
                 );
             }
         }
@@ -1048,11 +1048,11 @@ class AirVisual extends IPSModule
             } else {
                 $form = array_merge_recursive(
                     $form, [
-                             [
-                                 'name'    => 'state',
-                                 'type'    => 'Select',
-                                 'caption' => 'State',
-                                 'options' => $this->GetFormState()]]
+                        [
+                            'name'    => 'state',
+                            'type'    => 'Select',
+                            'caption' => 'State',
+                            'options' => $this->GetFormState()]]
                 );
             }
         }
@@ -1062,11 +1062,11 @@ class AirVisual extends IPSModule
             } else {
                 $form = array_merge_recursive(
                     $form, [
-                             [
-                                 'name'    => 'city',
-                                 'type'    => 'Select',
-                                 'caption' => 'City',
-                                 'options' => $this->GetFormCity()]]
+                        [
+                            'name'    => 'city',
+                            'type'    => 'Select',
+                            'caption' => 'City',
+                            'options' => $this->GetFormCity()]]
                 );
             }
         }
